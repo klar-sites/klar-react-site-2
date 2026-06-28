@@ -15,13 +15,14 @@
           "text": "Boka tid 1"
         },
         "heroImage": {
-          "src": "/images/sophie-bergerheim_orig.jpg",
+          "src": "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixid=M3w5ODc2NzB8MHwxfHNlYXJjaHw2fHxjbGluaWN8ZW58MXx8fHwxNzgyNjU3MDk3fDA&ixlib=rb-4.1.0&w=1600&q=80&auto=format&fit=crop",
           "alt": "Ljus och välkomnande klinikmiljö"
         },
         "heroBtnSecondary": {
           "href": "/behandlingar",
           "text": "Se behandlingar 1"
-        }
+        },
+        "heroEyebrow": "Trygg vård nära dig 7"
       }
     },
     {
@@ -32,7 +33,11 @@
       "name": "om-oss.html",
       "editableElements": ".vkn-ph-eyebrow :field(title:Etikett, name:pageEyebrow, type:string, section:Sidhuvud),\n.vkn-ph-title :field(title:Sidtitel, name:pageTitle, type:string, section:Sidhuvud),\n.vkn-ph-text :field(title:Beskrivning, name:pageText, type:text, section:Sidhuvud),\n.vkn-about-image :field(title:Om oss-bild, name:aboutImage, type:image, section:Om oss),\n.vkn-about-heading :field(title:Om oss-rubrik, name:aboutHeading, type:string, section:Om oss),\n.vkn-about-body :field(title:Om oss-text, name:aboutBody, type:array, section:Om oss, options(layout:blocks)),\n.vkn-stats :field(title:Statistik, name:stats, type:array, section:Statistik, options(layout:blocks)),\n.vkn-team-eyebrow :field(title:Team-etikett, name:teamEyebrow, type:string, section:Team),\n.vkn-team-heading :field(title:Team-rubrik, name:teamHeading, type:string, section:Team),\n.vkn-team-text :field(title:Team-text, name:teamText, type:text, section:Team),\n.vkn-team :field(title:Teammedlemmar, name:teamMembers, type:array, section:Team, options(layout:blocks))",
       "content": {
-        "pageTitle": "Om oss 3"
+        "pageTitle": "Om oss 3",
+        "aboutImage": {
+          "src": "https://images.unsplash.com/photo-1666214280557-f1b5022eb634?auto=format&fit=crop&w=1600&q=80",
+          "alt": "Vårt team på kliniken"
+        }
       }
     }
   ],
