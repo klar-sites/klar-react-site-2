@@ -833,6 +833,7 @@
           try {
             const client = await getClient();
             const data = client ? await client.page(file) : null;
+            console.log(data)
             if (alive) { setContent(data || {}); setReady(true); }
           } catch (e) {
             if (alive) { setContent({}); setReady(true); }
