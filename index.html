@@ -1,14 +1,625 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>klar-react-site-2</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer=""></script>
-  </head>
-  <body>
-    <h1>klar-react-site-2</h1>
-    <p>Edit this page with Klar.</p>
-  </body>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vårdkliniken Norden</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/history@4.10.1/umd/history.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-router@5.3.4/umd/react-router.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-router-dom@5.3.4/umd/react-router-dom.min.js"></script>
+  <script crossorigin src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"></script>
+
+  <style>
+    :root {
+      --vkn-bg: #f6f4ef;
+      --vkn-surface: #ffffff;
+      --vkn-ink: #20302c;
+      --vkn-muted: #5e6f69;
+      --vkn-accent: #2f7a6b;
+      --vkn-accent-dark: #245f53;
+      --vkn-accent-soft: #e3efeb;
+      --vkn-border: #e6e2d8;
+      --vkn-radius: 22px;
+      --vkn-radius-sm: 14px;
+      --vkn-shadow: 0 18px 50px -28px rgba(32, 48, 44, 0.4);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--vkn-bg);
+      color: var(--vkn-ink);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .vkn-app { min-height: 100vh; display: flex; flex-direction: column; }
+    .vkn-shell { width: min(1140px, 92vw); margin: 0 auto; }
+    h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; font-weight: 500; line-height: 1.12; margin: 0; letter-spacing: -0.01em; }
+    p { margin: 0; }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+
+    /* Header */
+    .vkn-header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(246, 244, 239, 0.86);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--vkn-border);
+    }
+    .vkn-header__inner { display: flex; align-items: center; justify-content: space-between; height: 78px; }
+    .vkn-logo { display: flex; align-items: center; gap: 12px; font-family: 'Fraunces', serif; font-size: 1.25rem; font-weight: 600; }
+    .vkn-logo__mark {
+      width: 38px; height: 38px; border-radius: 12px;
+      background: var(--vkn-accent); color: #fff;
+      display: grid; place-items: center; font-size: 1.1rem;
+    }
+    .vkn-nav { display: flex; align-items: center; gap: 30px; }
+    .vkn-nav a { font-size: 0.95rem; color: var(--vkn-muted); font-weight: 500; transition: color 0.2s; }
+    .vkn-nav a:hover { color: var(--vkn-ink); }
+    .vkn-nav a.vkn-active { color: var(--vkn-accent); }
+    .vkn-nav__cta {
+      background: var(--vkn-accent); color: #fff !important; padding: 11px 22px;
+      border-radius: 999px; transition: background 0.2s;
+    }
+    .vkn-nav__cta:hover { background: var(--vkn-accent-dark); }
+    .vkn-burger { display: none; background: none; border: 0; cursor: pointer; font-size: 1.5rem; color: var(--vkn-ink); }
+
+    @media (max-width: 800px) {
+      .vkn-nav { position: fixed; inset: 78px 0 auto 0; background: var(--vkn-bg); flex-direction: column; align-items: stretch; padding: 18px 4vw 26px; gap: 16px; border-bottom: 1px solid var(--vkn-border); transform: translateY(-130%); transition: transform 0.28s ease; }
+      .vkn-nav.vkn-nav--open { transform: translateY(0); }
+      .vkn-nav__cta { text-align: center; }
+      .vkn-burger { display: block; }
+    }
+
+    /* Buttons */
+    .vkn-btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; border-radius: 999px; font-weight: 600; font-size: 0.98rem; cursor: pointer; border: 1px solid transparent; transition: transform 0.15s, background 0.2s, border-color 0.2s; }
+    .vkn-btn:hover { transform: translateY(-2px); }
+    .vkn-btn--primary { background: var(--vkn-accent); color: #fff; }
+    .vkn-btn--primary:hover { background: var(--vkn-accent-dark); }
+    .vkn-btn--ghost { background: transparent; color: var(--vkn-ink); border-color: var(--vkn-border); }
+    .vkn-btn--ghost:hover { border-color: var(--vkn-accent); color: var(--vkn-accent); }
+
+    .vkn-eyebrow { display: inline-block; font-size: 0.82rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--vkn-accent); margin-bottom: 14px; }
+
+    /* Hero */
+    .vkn-hero { padding: 70px 0 30px; }
+    .vkn-hero__grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
+    .vkn-hero h1 { font-size: clamp(2.4rem, 5vw, 3.6rem); margin-bottom: 22px; }
+    .vkn-hero__intro { font-size: 1.12rem; color: var(--vkn-muted); margin-bottom: 30px; max-width: 30em; }
+    .vkn-hero__actions { display: flex; flex-wrap: wrap; gap: 14px; }
+    .vkn-hero__media { border-radius: var(--vkn-radius); overflow: hidden; box-shadow: var(--vkn-shadow); aspect-ratio: 4/5; }
+    .vkn-hero__media img { width: 100%; height: 100%; object-fit: cover; }
+    @media (max-width: 800px) { .vkn-hero__grid { grid-template-columns: 1fr; gap: 36px; } .vkn-hero__media { aspect-ratio: 16/11; } }
+
+    /* Trust strip */
+    .vkn-trust { padding: 28px 0 10px; }
+    .vkn-trust__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+    .vkn-trust__item { background: var(--vkn-surface); border: 1px solid var(--vkn-border); border-radius: var(--vkn-radius-sm); padding: 22px 22px; }
+    .vkn-trust__item h3 { font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 600; margin-bottom: 6px; }
+    .vkn-trust__item p { font-size: 0.92rem; color: var(--vkn-muted); }
+    @media (max-width: 800px) { .vkn-trust__grid { grid-template-columns: 1fr 1fr; } }
+
+    /* Sections */
+    .vkn-section { padding: 64px 0; }
+    .vkn-section__head { max-width: 620px; margin-bottom: 40px; }
+    .vkn-section__head h2 { font-size: clamp(1.9rem, 3.6vw, 2.6rem); margin-bottom: 16px; }
+    .vkn-section__head p { color: var(--vkn-muted); font-size: 1.05rem; }
+    .vkn-section__head--center { margin: 0 auto 44px; text-align: center; }
+
+    /* Treatment cards */
+    .vkn-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+    .vkn-cards--six { grid-template-columns: repeat(3, 1fr); }
+    @media (max-width: 900px) { .vkn-cards, .vkn-cards--six { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 620px) { .vkn-cards, .vkn-cards--six { grid-template-columns: 1fr; } }
+    .vkn-tcard { background: var(--vkn-surface); border: 1px solid var(--vkn-border); border-radius: var(--vkn-radius); overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s; }
+    .vkn-tcard:hover { transform: translateY(-4px); box-shadow: var(--vkn-shadow); }
+    .vkn-tcard__media { aspect-ratio: 16/10; overflow: hidden; }
+    .vkn-tcard__media img { width: 100%; height: 100%; object-fit: cover; }
+    .vkn-tcard__body { padding: 24px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .vkn-tcard__body h3 { font-size: 1.3rem; }
+    .vkn-tcard__desc { color: var(--vkn-muted); font-size: 0.95rem; flex: 1; }
+    .vkn-tcard__meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+    .vkn-tag { font-size: 0.82rem; font-weight: 600; padding: 6px 12px; border-radius: 999px; background: var(--vkn-accent-soft); color: var(--vkn-accent-dark); }
+    .vkn-tag--muted { background: #f0eee7; color: var(--vkn-muted); }
+
+    .vkn-more { display: flex; justify-content: center; margin-top: 38px; }
+    .vkn-link-arrow { color: var(--vkn-accent); font-weight: 600; display: inline-flex; align-items: center; gap: 7px; }
+    .vkn-link-arrow:hover { gap: 12px; transition: gap 0.2s; }
+
+    /* CTA banner */
+    .vkn-cta { background: var(--vkn-accent); color: #fff; border-radius: var(--vkn-radius); padding: 56px 8%; text-align: center; }
+    .vkn-cta h2 { font-size: clamp(1.8rem, 3.4vw, 2.5rem); margin-bottom: 14px; color: #fff; }
+    .vkn-cta p { color: rgba(255,255,255,0.86); font-size: 1.06rem; max-width: 38em; margin: 0 auto 28px; }
+    .vkn-cta .vkn-btn--primary { background: #fff; color: var(--vkn-accent-dark); }
+    .vkn-cta .vkn-btn--primary:hover { background: #f1f1f1; }
+
+    /* Page header */
+    .vkn-pagehead { padding: 64px 0 20px; max-width: 720px; }
+    .vkn-pagehead h1 { font-size: clamp(2.2rem, 4.6vw, 3.2rem); margin-bottom: 18px; }
+    .vkn-pagehead p { color: var(--vkn-muted); font-size: 1.12rem; }
+
+    /* About */
+    .vkn-about__grid { display: grid; grid-template-columns: 0.95fr 1.05fr; gap: 56px; align-items: center; }
+    @media (max-width: 800px) { .vkn-about__grid { grid-template-columns: 1fr; gap: 34px; } }
+    .vkn-about__media { border-radius: var(--vkn-radius); overflow: hidden; box-shadow: var(--vkn-shadow); aspect-ratio: 5/6; }
+    .vkn-about__media img { width: 100%; height: 100%; object-fit: cover; }
+    .vkn-about__text h2 { font-size: clamp(1.8rem, 3.4vw, 2.5rem); margin-bottom: 20px; }
+    .vkn-about__text p { color: var(--vkn-muted); margin-bottom: 16px; }
+
+    /* Stats */
+    .vkn-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    @media (max-width: 700px) { .vkn-stats { grid-template-columns: 1fr; } }
+    .vkn-stat { background: var(--vkn-surface); border: 1px solid var(--vkn-border); border-radius: var(--vkn-radius); padding: 36px 28px; text-align: center; }
+    .vkn-stat__num { font-family: 'Fraunces', serif; font-size: 2.8rem; color: var(--vkn-accent); line-height: 1; margin-bottom: 8px; }
+    .vkn-stat__label { color: var(--vkn-muted); font-size: 0.98rem; }
+
+    /* Team */
+    .vkn-team { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+    @media (max-width: 800px) { .vkn-team { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 520px) { .vkn-team { grid-template-columns: 1fr; } }
+    .vkn-member { text-align: center; }
+    .vkn-member__photo { aspect-ratio: 1; border-radius: var(--vkn-radius); overflow: hidden; margin-bottom: 16px; box-shadow: var(--vkn-shadow); }
+    .vkn-member__photo img { width: 100%; height: 100%; object-fit: cover; }
+    .vkn-member h3 { font-size: 1.2rem; margin-bottom: 4px; }
+    .vkn-member__role { color: var(--vkn-accent); font-weight: 600; font-size: 0.92rem; }
+
+    /* Contact */
+    .vkn-contact__grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 50px; align-items: start; }
+    @media (max-width: 860px) { .vkn-contact__grid { grid-template-columns: 1fr; } }
+    .vkn-info { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 520px) { .vkn-info { grid-template-columns: 1fr; } }
+    .vkn-info__card { background: var(--vkn-surface); border: 1px solid var(--vkn-border); border-radius: var(--vkn-radius-sm); padding: 24px; }
+    .vkn-info__card h3 { font-family: 'Inter', sans-serif; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--vkn-accent); margin-bottom: 8px; }
+    .vkn-info__card p { color: var(--vkn-muted); font-size: 0.98rem; white-space: pre-line; }
+    .vkn-form { background: var(--vkn-surface); border: 1px solid var(--vkn-border); border-radius: var(--vkn-radius); padding: 32px; }
+    .vkn-form label { display: block; font-size: 0.88rem; font-weight: 600; margin-bottom: 7px; }
+    .vkn-field { margin-bottom: 20px; }
+    .vkn-form input, .vkn-form textarea { width: 100%; padding: 13px 15px; border: 1px solid var(--vkn-border); border-radius: var(--vkn-radius-sm); font-family: inherit; font-size: 0.96rem; background: var(--vkn-bg); color: var(--vkn-ink); }
+    .vkn-form input:focus, .vkn-form textarea:focus { outline: 2px solid var(--vkn-accent); border-color: transparent; }
+    .vkn-form textarea { resize: vertical; min-height: 130px; }
+    .vkn-form__ok { background: var(--vkn-accent-soft); color: var(--vkn-accent-dark); padding: 14px; border-radius: var(--vkn-radius-sm); font-size: 0.95rem; margin-top: 16px; }
+
+    /* Footer */
+    .vkn-footer { margin-top: auto; background: var(--vkn-ink); color: #cdd6d3; padding: 56px 0 30px; }
+    .vkn-footer__grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 40px; margin-bottom: 36px; }
+    @media (max-width: 700px) { .vkn-footer__grid { grid-template-columns: 1fr; gap: 28px; } }
+    .vkn-footer .vkn-logo { color: #fff; margin-bottom: 14px; }
+    .vkn-footer p { font-size: 0.92rem; max-width: 28em; }
+    .vkn-footer h4 { font-family: 'Inter', sans-serif; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; color: #fff; margin: 0 0 14px; }
+    .vkn-footer ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+    .vkn-footer ul a { font-size: 0.92rem; color: #cdd6d3; }
+    .vkn-footer ul a:hover { color: #fff; }
+    .vkn-footer__bottom { border-top: 1px solid rgba(255,255,255,0.12); padding-top: 22px; font-size: 0.85rem; color: #93a39e; }
+
+    .vkn-loading { padding: 120px 0; text-align: center; color: var(--vkn-muted); }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" data-presets="react">
+    const { useState, useEffect } = React;
+    const { HashRouter, BrowserRouter, MemoryRouter, Switch, Route, Link, NavLink, useLocation } = ReactRouterDOM;
+
+    const PROJECT_ID = 476;
+    const KLAR_ROUTE_KEY = "klar:spa-route:" + (window.__KLAR_PROJECT_ID__ || PROJECT_ID);
+    function readStoredRoute() {
+      try { return localStorage.getItem(KLAR_ROUTE_KEY) || "/"; } catch (e) { return "/"; }
+    }
+
+    /* ---- Klar content client ---- */
+    let klarClientPromise = null;
+    function getClient() {
+      if (!klarClientPromise) {
+        klarClientPromise = import('https://editor.klar.website/sdk/v1/content.js')
+          .then(m => m.createKlarClient({ projectId: PROJECT_ID }))
+          .catch(() => null);
+      }
+      return klarClientPromise;
+    }
+    function usePageContent(file) {
+      const [content, setContent] = useState(null);
+      const [ready, setReady] = useState(false);
+      useEffect(() => {
+        let alive = true;
+        (async () => {
+          try {
+            const client = await getClient();
+            const data = client ? await client.page(file) : null;
+            if (alive) { setContent(data || {}); setReady(true); }
+          } catch (e) {
+            if (alive) { setContent({}); setReady(true); }
+          }
+        })();
+        return () => { alive = false; };
+      }, [file]);
+      return [content || {}, ready];
+    }
+    const T = (c, key, fallback) => (c && c[key] != null && c[key] !== "" ? c[key] : fallback);
+    const IMG = (c, key, fb) => ({ src: (c && c[key] && c[key].src) || fb.src, alt: (c && c[key] && c[key].alt) || fb.alt });
+    const LNK = (c, key, fb) => ({ href: (c && c[key] && c[key].href) || fb.href, text: (c && c[key] && c[key].text) || fb.text });
+
+    /* ---- Reusable repeating-row renderer ---- */
+    function Repeat({ content, name, className, children }) {
+      const items = content && content[name];
+      if (Array.isArray(items) && items.length && items.some(it => it && it.html)) {
+        const html = items.map(it => it.html || "").join("");
+        return <div className={className} dangerouslySetInnerHTML={{ __html: html }} />;
+      }
+      return <div className={className}>{children}</div>;
+    }
+
+    /* ---- Header / Footer (NOT editable) ---- */
+    function Header() {
+      const [open, setOpen] = useState(false);
+      const close = () => setOpen(false);
+      return (
+        <header className="vkn-header">
+          <div className="vkn-shell vkn-header__inner">
+            <Link to="/" className="vkn-logo" onClick={close}>
+              <span className="vkn-logo__mark">✚</span> Vårdkliniken Norden
+            </Link>
+            <button className="vkn-burger" onClick={() => setOpen(o => !o)} aria-label="Meny">☰</button>
+            <nav className={"vkn-nav" + (open ? " vkn-nav--open" : "")}>
+              <NavLink exact to="/" activeClassName="vkn-active" onClick={close}>Hem</NavLink>
+              <NavLink to="/behandlingar" activeClassName="vkn-active" onClick={close}>Behandlingar</NavLink>
+              <NavLink to="/om-oss" activeClassName="vkn-active" onClick={close}>Om oss</NavLink>
+              <NavLink to="/kontakt" activeClassName="vkn-active" onClick={close}>Kontakt</NavLink>
+              <Link to="/kontakt" className="vkn-nav__cta" onClick={close}>Boka tid</Link>
+            </nav>
+          </div>
+        </header>
+      );
+    }
+
+    function Footer() {
+      return (
+        <footer className="vkn-footer">
+          <div className="vkn-shell">
+            <div className="vkn-footer__grid">
+              <div>
+                <div className="vkn-logo"><span className="vkn-logo__mark">✚</span> Vårdkliniken Norden</div>
+                <p>Modern och trygg vård i hjärtat av staden. Legitimerad personal och korta väntetider för hela familjen.</p>
+              </div>
+              <div>
+                <h4>Sidor</h4>
+                <ul>
+                  <li><Link to="/">Hem</Link></li>
+                  <li><Link to="/behandlingar">Behandlingar</Link></li>
+                  <li><Link to="/om-oss">Om oss</Link></li>
+                  <li><Link to="/kontakt">Kontakt</Link></li>
+                </ul>
+              </div>
+              <div>
+                <h4>Kontakt</h4>
+                <ul>
+                  <li>Storgatan 12, 111 22 Stockholm</li>
+                  <li>08-123 45 67</li>
+                  <li>info@vardklinikennorden.se</li>
+                </ul>
+              </div>
+            </div>
+            <div className="vkn-footer__bottom">© {new Date().getFullYear()} Vårdkliniken Norden. Alla rättigheter förbehållna.</div>
+          </div>
+        </footer>
+      );
+    }
+
+    /* ---- CTA banner (shared, editable per-page) ---- */
+    function CtaBanner({ c }) {
+      const btn = LNK(c, "ctaBtn", { href: "/kontakt", text: "Boka tid" });
+      return (
+        <section className="vkn-section">
+          <div className="vkn-shell">
+            <div className="vkn-cta">
+              <h2 className="vkn-cta-heading">{T(c, "ctaHeading", "Redo att boka din tid?")}</h2>
+              <p className="vkn-cta-text">{T(c, "ctaText", "Hör av dig så hjälper vi dig att hitta en tid som passar dig. Vi har korta väntetider och tar emot både nya och återkommande patienter.")}</p>
+              <Link to={btn.href} className="vkn-btn vkn-btn--primary vkn-cta-btn">{btn.text}</Link>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    /* ---- HOME ---- */
+    function Home() {
+      const [c, ready] = usePageContent("index.html");
+      if (!ready) return <div className="vkn-loading">Laddar…</div>;
+      const heroImg = IMG(c, "heroImage", { src: "https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?auto=format&fit=crop&w=1600&q=80", alt: "Ljus och välkomnande klinikmiljö" });
+      const btn1 = LNK(c, "heroBtnPrimary", { href: "/kontakt", text: "Boka tid" });
+      const btn2 = LNK(c, "heroBtnSecondary", { href: "/behandlingar", text: "Se behandlingar" });
+      return (
+        <main>
+          <section className="vkn-hero">
+            <div className="vkn-shell vkn-hero__grid">
+              <div>
+                <span className="vkn-eyebrow vkn-hero-eyebrow">{T(c, "heroEyebrow", "Trygg vård nära dig")}</span>
+                <h1 className="vkn-hero-headline">{T(c, "heroHeadline", "Personlig vård med omtanke och tid för varje patient")}</h1>
+                <p className="vkn-hero__intro vkn-hero-intro">{T(c, "heroIntro", "Vårdkliniken Norden erbjuder modern och trygg vård med legitimerad personal. Hos oss möts du av lugn, kunskap och korta väntetider – mitt i centrala Stockholm.")}</p>
+                <div className="vkn-hero__actions">
+                  <Link to={btn1.href} className="vkn-btn vkn-btn--primary vkn-hero-btn-primary">{btn1.text}</Link>
+                  <Link to={btn2.href} className="vkn-btn vkn-btn--ghost vkn-hero-btn-secondary">{btn2.text}</Link>
+                </div>
+              </div>
+              <div className="vkn-hero__media">
+                <img className="vkn-hero-image" src={heroImg.src} alt={heroImg.alt} />
+              </div>
+            </div>
+          </section>
+
+          <section className="vkn-trust">
+            <div className="vkn-shell">
+              <Repeat content={c} name="trustPoints" className="vkn-trust__grid">
+                {[
+                  ["Legitimerad personal", "Erfarna läkare och sjuksköterskor med full legitimation."],
+                  ["Korta väntetider", "Boka tid snabbt – ofta redan inom samma vecka."],
+                  ["Centralt läge", "Lätt att nå med kollektivtrafik mitt i city."],
+                  ["Trygg uppföljning", "Vi följer upp din vård och finns kvar för dig."],
+                ].map(([h, p], i) => (
+                  <div className="vkn-trust__item" key={i}>
+                    <h3>{h}</h3>
+                    <p>{p}</p>
+                  </div>
+                ))}
+              </Repeat>
+            </div>
+          </section>
+
+          <section className="vkn-section">
+            <div className="vkn-shell">
+              <div className="vkn-section__head">
+                <span className="vkn-eyebrow vkn-treat-eyebrow">{T(c, "treatEyebrow", "Vad vi erbjuder")}</span>
+                <h2 className="vkn-treat-heading">{T(c, "treatHeading", "Våra behandlingar")}</h2>
+                <p className="vkn-treat-text">{T(c, "treatText", "Vi erbjuder ett brett utbud av tjänster för hela familjen – från hälsoundersökningar till specialistvård. Här är några av våra mest efterfrågade behandlingar.")}</p>
+              </div>
+              <Repeat content={c} name="treatmentCards" className="vkn-cards">
+                {[
+                  ["https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1600&q=80", "Hälsoundersökning", "En grundlig genomgång av din hälsa med blodprov, läkarsamtal och individuell rådgivning.", "1 295 kr", "45 min"],
+                  ["https://images.unsplash.com/photo-1584516150909-c43483ee7932?auto=format&fit=crop&w=1600&q=80", "Vaccination", "Skydd inför resa eller säsong. Vi erbjuder ett komplett utbud av vacciner.", "Från 350 kr", "20 min"],
+                  ["https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&w=1600&q=80", "Läkarbesök", "Ett tryggt möte med legitimerad läkare för dina besvär och frågor.", "950 kr", "30 min"],
+                ].map(([img, t, d, price, dur], i) => (
+                  <article className="vkn-tcard" key={i}>
+                    <div className="vkn-tcard__media"><img src={img} alt={t} /></div>
+                    <div className="vkn-tcard__body">
+                      <h3>{t}</h3>
+                      <p className="vkn-tcard__desc">{d}</p>
+                      <div className="vkn-tcard__meta">
+                        <span className="vkn-tag">{price}</span>
+                        <span className="vkn-tag vkn-tag--muted">{dur}</span>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </Repeat>
+              <div className="vkn-more">
+                <Link to="/behandlingar" className="vkn-link-arrow vkn-treat-link">Visa alla behandlingar →</Link>
+              </div>
+            </div>
+          </section>
+
+          <CtaBanner c={c} />
+        </main>
+      );
+    }
+
+    /* ---- TREATMENTS ---- */
+    function Treatments() {
+      const [c, ready] = usePageContent("behandlingar.html");
+      if (!ready) return <div className="vkn-loading">Laddar…</div>;
+      const six = [
+        ["https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1600&q=80", "Hälsoundersökning", "Grundlig genomgång med blodprov, läkarsamtal och individuell rådgivning.", "1 295 kr", "45 min"],
+        ["https://images.unsplash.com/photo-1584516150909-c43483ee7932?auto=format&fit=crop&w=1600&q=80", "Vaccination", "Komplett utbud av vacciner inför resa, säsong eller arbete.", "Från 350 kr", "20 min"],
+        ["https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&w=1600&q=80", "Läkarbesök", "Tryggt möte med legitimerad läkare för dina besvär och frågor.", "950 kr", "30 min"],
+        ["https://images.unsplash.com/photo-1559757175-0eb30cd8c063?auto=format&fit=crop&w=1600&q=80", "Provtagning", "Snabb och smidig blodprovstagning med svar inom kort.", "Från 250 kr", "15 min"],
+        ["https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=1600&q=80", "Hudkontroll", "Undersökning av hud och leverfläckar av specialist.", "1 100 kr", "30 min"],
+        ["https://images.unsplash.com/photo-1551601651-2a8555f1a136?auto=format&fit=crop&w=1600&q=80", "Hälsosamtal", "Personligt samtal kring livsstil, kost och välmående.", "750 kr", "40 min"],
+      ];
+      return (
+        <main>
+          <section className="vkn-pagehead">
+            <div className="vkn-shell">
+              <span className="vkn-eyebrow vkn-ph-eyebrow">{T(c, "pageEyebrow", "Våra tjänster")}</span>
+              <h1 className="vkn-ph-title">{T(c, "pageTitle", "Behandlingar")}</h1>
+              <p className="vkn-ph-text">{T(c, "pageText", "Vi erbjuder ett brett utbud av vård och hälsotjänster för hela familjen. Alla behandlingar utförs av legitimerad personal i en lugn och trygg miljö.")}</p>
+            </div>
+          </section>
+          <section className="vkn-section" style={{ paddingTop: "30px" }}>
+            <div className="vkn-shell">
+              <Repeat content={c} name="treatmentCards" className="vkn-cards vkn-cards--six">
+                {six.map(([img, t, d, price, dur], i) => (
+                  <article className="vkn-tcard" key={i}>
+                    <div className="vkn-tcard__media"><img src={img} alt={t} /></div>
+                    <div className="vkn-tcard__body">
+                      <h3>{t}</h3>
+                      <p className="vkn-tcard__desc">{d}</p>
+                      <div className="vkn-tcard__meta">
+                        <span className="vkn-tag">{price}</span>
+                        <span className="vkn-tag vkn-tag--muted">{dur}</span>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </Repeat>
+            </div>
+          </section>
+          <CtaBanner c={c} />
+        </main>
+      );
+    }
+
+    /* ---- ABOUT ---- */
+    function About() {
+      const [c, ready] = usePageContent("om-oss.html");
+      if (!ready) return <div className="vkn-loading">Laddar…</div>;
+      const aboutImg = IMG(c, "aboutImage", { src: "https://images.unsplash.com/photo-1666214280557-f1b5022eb634?auto=format&fit=crop&w=1600&q=80", alt: "Vårt team på kliniken" });
+      return (
+        <main>
+          <section className="vkn-pagehead">
+            <div className="vkn-shell">
+              <span className="vkn-eyebrow vkn-ph-eyebrow">{T(c, "pageEyebrow", "Lär känna oss")}</span>
+              <h1 className="vkn-ph-title">{T(c, "pageTitle", "Om oss")}</h1>
+              <p className="vkn-ph-text">{T(c, "pageText", "Vårdkliniken Norden grundades med en enkel idé: att ge varje patient den tid och omtanke som god vård kräver.")}</p>
+            </div>
+          </section>
+
+          <section className="vkn-section" style={{ paddingTop: "30px" }}>
+            <div className="vkn-shell vkn-about__grid">
+              <div className="vkn-about__media">
+                <img className="vkn-about-image" src={aboutImg.src} alt={aboutImg.alt} />
+              </div>
+              <div className="vkn-about__text">
+                <h2 className="vkn-about-heading">{T(c, "aboutHeading", "Vård som sätter människan främst")}</h2>
+                <Repeat content={c} name="aboutBody" className="vkn-about-body">
+                  <p>Sedan starten 2014 har vi byggt en klinik där du som patient alltid står i centrum. Vi tror på lugna möten, tydlig information och att aldrig ha bråttom – för att du ska känna dig trygg.</p>
+                  <p>Vår personal består av erfarna läkare, sjuksköterskor och specialister som arbetar nära varandra. Tillsammans täcker vi allt från vardagliga besvär till mer omfattande utredningar.</p>
+                  <p>Vi investerar löpande i modern utrustning och vidareutbildning, så att du alltid får vård av högsta kvalitet i en välkomnande miljö.</p>
+                </Repeat>
+              </div>
+            </div>
+          </section>
+
+          <section className="vkn-section" style={{ paddingTop: 0 }}>
+            <div className="vkn-shell">
+              <Repeat content={c} name="stats" className="vkn-stats">
+                {[
+                  ["10+", "års erfarenhet"],
+                  ["25 000", "nöjda patienter"],
+                  ["98%", "skulle rekommendera oss"],
+                ].map(([n, l], i) => (
+                  <div className="vkn-stat" key={i}>
+                    <div className="vkn-stat__num">{n}</div>
+                    <div className="vkn-stat__label">{l}</div>
+                  </div>
+                ))}
+              </Repeat>
+            </div>
+          </section>
+
+          <section className="vkn-section" style={{ paddingTop: 0 }}>
+            <div className="vkn-shell">
+              <div className="vkn-section__head vkn-section__head--center">
+                <span className="vkn-eyebrow vkn-team-eyebrow">{T(c, "teamEyebrow", "Vårt team")}</span>
+                <h2 className="vkn-team-heading">{T(c, "teamHeading", "Människorna bakom kliniken")}</h2>
+                <p className="vkn-team-text">{T(c, "teamText", "Ett engagerat team som brinner för att ge dig bästa möjliga vård.")}</p>
+              </div>
+              <Repeat content={c} name="teamMembers" className="vkn-team">
+                {[
+                  ["https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=1200&q=80", "Dr. Anna Lindqvist", "Specialistläkare, allmänmedicin"],
+                  ["https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=1200&q=80", "Erik Sandström", "Leg. sjuksköterska"],
+                  ["https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=1200&q=80", "Dr. Maria Holm", "Hudspecialist"],
+                ].map(([img, name, role], i) => (
+                  <div className="vkn-member" key={i}>
+                    <div className="vkn-member__photo"><img src={img} alt={name} /></div>
+                    <h3>{name}</h3>
+                    <div className="vkn-member__role">{role}</div>
+                  </div>
+                ))}
+              </Repeat>
+            </div>
+          </section>
+        </main>
+      );
+    }
+
+    /* ---- CONTACT ---- */
+    function Contact() {
+      const [c, ready] = usePageContent("kontakt.html");
+      const [sent, setSent] = useState(false);
+      if (!ready) return <div className="vkn-loading">Laddar…</div>;
+      return (
+        <main>
+          <section className="vkn-pagehead">
+            <div className="vkn-shell">
+              <span className="vkn-eyebrow vkn-ph-eyebrow">{T(c, "pageEyebrow", "Hör av dig")}</span>
+              <h1 className="vkn-ph-title">{T(c, "pageTitle", "Kontakt")}</h1>
+              <p className="vkn-ph-text">{T(c, "pageText", "Vi finns här för dig. Boka tid, ställ en fråga eller besök oss i våra centrala lokaler – vi hjälper dig gärna.")}</p>
+            </div>
+          </section>
+
+          <section className="vkn-section" style={{ paddingTop: "20px" }}>
+            <div className="vkn-shell vkn-contact__grid">
+              <Repeat content={c} name="infoCards" className="vkn-info">
+                {[
+                  ["Adress", "Storgatan 12\n111 22 Stockholm"],
+                  ["Telefon", "08-123 45 67\nVardagar 08–17"],
+                  ["E-post", "info@vardklinikennorden.se\nVi svarar inom 24 timmar"],
+                  ["Öppettider", "Mån–Fre 08:00–18:00\nLör 09:00–13:00"],
+                ].map(([h, p], i) => (
+                  <div className="vkn-info__card" key={i}>
+                    <h3>{h}</h3>
+                    <p>{p}</p>
+                  </div>
+                ))}
+              </Repeat>
+
+              <form className="vkn-form" onSubmit={(e) => { e.preventDefault(); setSent(true); }}>
+                <div className="vkn-field">
+                  <label htmlFor="vkn-name">Namn</label>
+                  <input id="vkn-name" type="text" placeholder="Ditt namn" required />
+                </div>
+                <div className="vkn-field">
+                  <label htmlFor="vkn-email">E-post</label>
+                  <input id="vkn-email" type="email" placeholder="din@epost.se" required />
+                </div>
+                <div className="vkn-field">
+                  <label htmlFor="vkn-msg">Meddelande</label>
+                  <textarea id="vkn-msg" placeholder="Hur kan vi hjälpa dig?" required></textarea>
+                </div>
+                <button type="submit" className="vkn-btn vkn-btn--primary">Skicka meddelande</button>
+                {sent && <div className="vkn-form__ok">Tack! Vi har tagit emot ditt meddelande och återkommer snart.</div>}
+              </form>
+            </div>
+          </section>
+        </main>
+      );
+    }
+
+    /* ---- Route reporter + scroll reset ---- */
+    function RouteWatcher() {
+      const location = useLocation();
+      useEffect(() => {
+        window.scrollTo(0, 0);
+        if (window.__KLAR_CDN) {
+          window.parent.postMessage({ type: "klar-route", route: location.pathname }, "*");
+          try { localStorage.setItem(KLAR_ROUTE_KEY, location.pathname); } catch (e) {}
+        }
+      }, [location.pathname]);
+      return null;
+    }
+
+    function App() {
+      return (
+        <div className="vkn-app">
+          <RouteWatcher />
+          <Header />
+          <Switch>
+            <Route exact path="/" component={Home} />
+            <Route path="/behandlingar" component={Treatments} />
+            <Route path="/om-oss" component={About} />
+            <Route path="/kontakt" component={Contact} />
+            <Route component={Home} />
+          </Switch>
+          <Footer />
+        </div>
+      );
+    }
+
+    const Router = window.__KLAR_CDN ? MemoryRouter : BrowserRouter;
+    ReactDOM.createRoot(document.getElementById("root")).render(
+      <Router
+        basename={window.__KLAR_BASE || undefined}
+        {...(window.__KLAR_CDN ? { initialEntries: [readStoredRoute()] } : {})}
+      >
+        <App />
+      </Router>
+    );
+  </script>
+</body>
 </html>
