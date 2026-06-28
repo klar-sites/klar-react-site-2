@@ -6,7 +6,9 @@
     <title>Vårdkliniken Norden</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&amp;family=Inter:wght@400;500;600&amp;display=swap"
+      rel="stylesheet">
 
     <script crossorigin="" src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
     <script crossorigin="" src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
@@ -824,7 +826,7 @@
     }
     function usePageContent(file) {
       const [content, setContent] = useState(null);
-      const [ready, setReady] = useState(false);
+      const [ready, setReady] = useState(true);
       useEffect(() => {
         let alive = true;
         (async () => {
