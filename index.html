@@ -818,7 +818,7 @@
     let klarClientPromise = null;
     function getClient() {
       if (!klarClientPromise) {
-        klarClientPromise = import('https://editor.klar.website/sdk/v1/content.js')
+        klarClientPromise = import('http://localhost:5173/sdk/v1/content.js')
           .then(m => m.createKlarClient({ projectId: PROJECT_ID }))
           .catch(() => null);
       }
